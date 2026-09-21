@@ -7,10 +7,10 @@ import './App.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3333/api'
 
-type User = { id: string; name: string; email: string; role: string; phone?: string }
+type User = { id: string; name: string; email: string; role: string; phone?: string; isActive?: boolean }
 type Service = { id: string; name: string; priceCents: number; durationMin: number }
 type Barber = { id: string; userId: string; user: User; workStart: string; workEnd: string; breakStart?: string; breakEnd?: string }
-type Barbershop = { id: string; name: string; address: string; slug: string; imageUrl?: string; services: Service[]; barbers: Barber[] }
+type Barbershop = { id: string; ownerId?: string; name: string; address: string; slug: string; imageUrl?: string; services: Service[]; barbers: Barber[] }
 
 type Appointment = {
   id: string;
