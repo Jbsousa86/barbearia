@@ -228,11 +228,11 @@ function LoginPortal() {
             <label>Celular (WhatsApp)
               <input type="tel" required placeholder="Ex: 5511999999999" value={registerPhone} onChange={e => setRegisterPhone(e.target.value)} />
             </label>
-            <div style={{ display: 'flex', gap: '15px' }}>
-              <label style={{ flex: 1 }}>CEP
+            <div className="form-row">
+              <label>CEP
                 <input type="text" required value={registerCep} onChange={e => setRegisterCep(e.target.value)} onBlur={handleRegisterCepBlur} placeholder="00000-000" />
               </label>
-              <label style={{ flex: 2 }}>Cidade
+              <label>Cidade
                 <input type="text" required value={registerCity} onChange={e => setRegisterCity(e.target.value)} placeholder="Auto-preenchido pelo CEP" />
               </label>
             </div>
