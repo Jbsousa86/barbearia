@@ -463,9 +463,11 @@ function CustomerPortal() {
                     </select>
                   </label>
                 </div>
-                <button className="primary-button" type="submit" disabled={!user}>
-                  {user ? 'Confirmar agendamento' : 'Faça login primeiro'}
-                </button>
+                {user && (
+                  <button className="primary-button" type="submit">
+                    Confirmar agendamento
+                  </button>
+                )}
               </form>
               )}
             </section>
