@@ -384,8 +384,7 @@ function CustomerPortal() {
   if (!shop) return <main className="customer-page"><h1>Barbearia não encontrada (/{slug})</h1></main>
 
   return <main className="customer-page">
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-      <button className="outline-button" onClick={() => navigate('/')} style={{ border: 'none', background: 'transparent', padding: 0 }}>← Voltar para o início</button>
+    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '20px' }}>
       {user ? (
         <nav style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
           <button className={`outline-button ${activeTab === 'agendar' ? 'active' : ''}`} onClick={() => setActiveTab('agendar')} style={{ padding: '6px 12px' }}>Agendar</button>
