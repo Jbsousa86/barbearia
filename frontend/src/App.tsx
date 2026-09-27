@@ -385,14 +385,12 @@ function CustomerPortal() {
 
   return <main className="customer-page">
     <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '20px' }}>
-      {user ? (
+      {user && (
         <nav style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
           <button className={`outline-button ${activeTab === 'agendar' ? 'active' : ''}`} onClick={() => setActiveTab('agendar')} style={{ padding: '6px 12px' }}>Agendar</button>
           <button className={`outline-button ${activeTab === 'perfil' ? 'active' : ''}`} onClick={() => setActiveTab('perfil')} style={{ padding: '6px 12px' }}>Meu Perfil</button>
           <button onClick={handleLogout} className="outline-button" style={{ color: 'var(--status-red)', borderColor: 'var(--status-red)', padding: '6px 12px' }}>Sair</button>
         </nav>
-      ) : (
-        <button className="primary-button" onClick={() => navigate('/login?shop=' + slug)} style={{ padding: '6px 16px' }}>Fazer Login</button>
       )}
     </div>
     {notice && <div className="global-notice" style={{marginBottom: '40px'}}>{notice}<button onClick={() => setNotice('')}>×</button></div>}
