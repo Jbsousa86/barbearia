@@ -113,7 +113,7 @@ function HomePortal() {
     </p>
     <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
       <Link to="/login" className="primary-button" style={{ textDecoration: 'none', padding: '16px 32px' }}>Acessar Plataforma</Link>
-      <Link to="/barbearia-central" className="outline-button" style={{ textDecoration: 'none', padding: '16px 32px', fontSize: '16px' }}>Ver barbearia de demonstração</Link>
+      <Link to="/barbearia-central?demo=true" className="outline-button" style={{ textDecoration: 'none', padding: '16px 32px', fontSize: '16px' }}>Ver barbearia de demonstração</Link>
     </div>
   </main>
 }
@@ -268,6 +268,8 @@ function LoginPortal() {
 function CustomerPortal() {
   const { slug } = useParams()
   const navigate = useNavigate()
+  const searchParams = new URLSearchParams(window.location.search)
+  const isDemo = searchParams.get('demo') === 'true'
   const [shop, setShop] = useState<Barbershop | null>(null)
   const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(true)
@@ -385,6 +387,9 @@ function CustomerPortal() {
 
   return <main className="customer-page">
     <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '20px' }}>
+      {isDemo && (
+        <button className="outline-button" onClick={() => navigate('/')} style={{ border: 'none', background: 'transparent', padding: 0, marginRight: 'auto' }}>← Voltar para a página do SaaS</button>
+      )}
       {user && (
         <nav style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
           <button className={`outline-button ${activeTab === 'agendar' ? 'active' : ''}`} onClick={() => setActiveTab('agendar')} style={{ padding: '6px 12px' }}>Agendar</button>
