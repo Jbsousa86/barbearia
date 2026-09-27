@@ -209,10 +209,10 @@ function LoginPortal() {
   }
 
   return <main className="dashboard-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '80vh' }}>
-    <div style={{ width: '100%', maxWidth: '500px', marginBottom: '20px' }}>
+    <div style={{ width: '100%', maxWidth: '600px', marginBottom: '20px' }}>
       <button className="outline-button" onClick={() => navigate(-1)} style={{ border: 'none', background: 'transparent', padding: 0 }}>← Voltar</button>
     </div>
-    <section className="booking-card" style={{ width: '100%', maxWidth: '500px', margin: 0 }}>
+    <section className="booking-card" style={{ width: '100%', maxWidth: '600px', margin: 0 }}>
       <h2>{isRegister ? 'Criar Conta' : 'Login Universal'}</h2>
       <p className="subheading">{isRegister ? 'Cadastre-se para agendar' : 'Acesse o seu painel de controle'}</p>
       
@@ -233,7 +233,7 @@ function LoginPortal() {
                 <input type="text" required value={registerCep} onChange={e => setRegisterCep(e.target.value)} onBlur={handleRegisterCepBlur} placeholder="00000-000" />
               </label>
               <label>Cidade
-                <input type="text" required value={registerCity} onChange={e => setRegisterCity(e.target.value)} placeholder="Auto-preenchido pelo CEP" />
+                <input type="text" required value={registerCity} onChange={e => setRegisterCity(e.target.value)} placeholder="Busca automática..." />
               </label>
             </div>
             <label>E-mail
