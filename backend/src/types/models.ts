@@ -4,6 +4,8 @@ export interface User {
   email: string;
   passwordHash: string;
   phone?: string | null;
+  cep?: string | null;
+  city?: string | null;
   role: string;
   isActive: boolean;
   createdAt?: string | Date;
@@ -16,6 +18,8 @@ export interface Barbershop {
   name: string;
   description?: string | null;
   address: string;
+  cep?: string | null;
+  city?: string | null;
   phone?: string | null;
   imageUrl?: string | null;
   ownerId: string;

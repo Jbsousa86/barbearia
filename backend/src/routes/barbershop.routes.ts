@@ -47,7 +47,7 @@ const barbershopRoutes: FastifyPluginAsync = async (app) => {
   };
 
   app.get('/barbershops', async (request, reply) => {
-    const { userId } = request.query as { userId?: string };
+    const { userId, city } = request.query as { userId?: string, city?: string };
     
     let shopDocs: any[] = [];
 
@@ -73,6 +73,9 @@ const barbershopRoutes: FastifyPluginAsync = async (app) => {
         uniqueDocsMap.set(d.id, d);
       }
       shopDocs = Array.from(uniqueDocsMap.values());
+    } else if (city) {
+      const snap = await barbershopsRef.where('city', '==', city).get();
+      shopDocs = snap.docs;
     } else {
       const snap = await barbershopsRef.get();
       shopDocs = snap.docs;
@@ -97,7 +100,9 @@ const barbershopRoutes: FastifyPluginAsync = async (app) => {
       name: z.string(),
       address: z.string(),
       slug: z.string(),
-      ownerId: z.string()
+      ownerId: z.string(),
+      cep: z.string().optional(),
+      city: z.string().optional()
     });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(parsed.error);
@@ -181,6 +186,8 @@ const barbershopRoutes: FastifyPluginAsync = async (app) => {
       name: z.string().optional(),
       address: z.string().optional(),
       imageUrl: z.string().optional(),
+      cep: z.string().optional(),
+      city: z.string().optional()
     });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(parsed.error);

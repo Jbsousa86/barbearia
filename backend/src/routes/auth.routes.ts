@@ -16,7 +16,9 @@ const authRoutes: FastifyPluginAsync = async (app) => {
     // Optional data from frontend (e.g. name, phone when first signing up)
     const schema = z.object({
       name: z.string().optional(),
-      phone: z.string().optional()
+      phone: z.string().optional(),
+      cep: z.string().optional(),
+      city: z.string().optional()
     });
     const parsed = schema.safeParse(request.body);
     const bodyData = parsed.success ? parsed.data : {};
@@ -34,6 +36,8 @@ const authRoutes: FastifyPluginAsync = async (app) => {
         email: email || '',
         passwordHash: 'firebase', // no longer used
         phone: bodyData.phone || null,
+        cep: bodyData.cep || null,
+        city: bodyData.city || null,
         role: role,
         isActive: true,
         createdAt: new Date().toISOString(),
@@ -47,6 +51,8 @@ const authRoutes: FastifyPluginAsync = async (app) => {
       const updates: any = {};
       if (bodyData.name && bodyData.name !== userData.name) updates.name = bodyData.name;
       if (bodyData.phone && bodyData.phone !== userData.phone) updates.phone = bodyData.phone;
+      if (bodyData.cep && bodyData.cep !== userData.cep) updates.cep = bodyData.cep;
+      if (bodyData.city && bodyData.city !== userData.city) updates.city = bodyData.city;
       
       if (Object.keys(updates).length > 0) {
         updates.updatedAt = new Date().toISOString();
@@ -70,7 +76,7 @@ const authRoutes: FastifyPluginAsync = async (app) => {
     }
 
     return reply.status(200).send({
-      user: { id: uid, name: userData.name, email: userData.email, role: userData.role },
+      user: { id: uid, name: userData.name, email: userData.email, role: userData.role, cep: userData.cep, city: userData.city },
       shop
     });
   });
@@ -102,7 +108,9 @@ const authRoutes: FastifyPluginAsync = async (app) => {
 
     const schema = z.object({
       name: z.string().optional(),
-      phone: z.string().optional()
+      phone: z.string().optional(),
+      cep: z.string().optional(),
+      city: z.string().optional()
     });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(parsed.error);
@@ -114,6 +122,8 @@ const authRoutes: FastifyPluginAsync = async (app) => {
     const dataToUpdate: any = { updatedAt: new Date().toISOString() };
     if (parsed.data.name) dataToUpdate.name = parsed.data.name;
     if (parsed.data.phone) dataToUpdate.phone = parsed.data.phone;
+    if (parsed.data.cep) dataToUpdate.cep = parsed.data.cep;
+    if (parsed.data.city) dataToUpdate.city = parsed.data.city;
 
     await usersRef.doc(id).update(dataToUpdate);
     
@@ -122,6 +132,8 @@ const authRoutes: FastifyPluginAsync = async (app) => {
       name: dataToUpdate.name || user.name,
       email: user.email,
       phone: dataToUpdate.phone !== undefined ? dataToUpdate.phone : user.phone,
+      cep: dataToUpdate.cep !== undefined ? dataToUpdate.cep : user.cep,
+      city: dataToUpdate.city !== undefined ? dataToUpdate.city : user.city,
       role: user.role
     });
   });

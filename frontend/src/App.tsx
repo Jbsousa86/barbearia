@@ -24,8 +24,21 @@ type Appointment = {
 function ProfileForm({ user }: { user: any }) {
   const [name, setName] = useState(user.name || '')
   const [phone, setPhone] = useState(user.phone || '')
+  const [cep, setCep] = useState(user.cep || '')
+  const [city, setCity] = useState(user.city || '')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+
+  const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, '');
+    if (val.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${val}/json/`);
+        const data = await res.json();
+        if (data.localidade) setCity(data.localidade);
+      } catch (err) {}
+    }
+  }
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,7 +49,7 @@ function ProfileForm({ user }: { user: any }) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({ name, phone, password })
+        body: JSON.stringify({ name, phone, cep, city, password })
       })
       if (res.ok) {
         const updatedUser = await res.json()
@@ -62,6 +75,14 @@ function ProfileForm({ user }: { user: any }) {
       <label>WhatsApp (Celular)
         <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} required />
       </label>
+      <div style={{ display: 'flex', gap: '15px' }}>
+        <label style={{ flex: 1 }}>CEP
+          <input type="text" value={cep} onChange={e => setCep(e.target.value)} onBlur={handleCepBlur} placeholder="00000-000" />
+        </label>
+        <label style={{ flex: 2 }}>Cidade
+          <input type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="Auto-preenchido pelo CEP" />
+        </label>
+      </div>
       <label>Nova Senha (Opcional)
         <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Digite apenas se quiser alterar" />
       </label>
@@ -102,12 +123,27 @@ function LoginPortal() {
   const [registerName, setRegisterName] = useState('')
   const [registerEmail, setRegisterEmail] = useState('')
   const [registerPhone, setRegisterPhone] = useState('')
+  const [registerCep, setRegisterCep] = useState('')
+  const [registerCity, setRegisterCity] = useState('')
   const [registerPassword, setRegisterPassword] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const navigate = useNavigate()
+  const searchParams = new URLSearchParams(window.location.search)
+  const shopSlug = searchParams.get('shop')
+
+  const handleRegisterCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, '');
+    if (val.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${val}/json/`);
+        const data = await res.json();
+        if (data.localidade) setRegisterCity(data.localidade);
+      } catch (err) {}
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -127,7 +163,7 @@ function LoginPortal() {
       const token = await firebaseUser.getIdToken()
 
       // Envia para o backend para sincronizar
-      const payload = isRegister ? { name: registerName, phone: registerPhone } : {}
+      const payload = isRegister ? { name: registerName, phone: registerPhone, cep: registerCep, city: registerCity } : {}
       const res = await fetch(`${API_URL}/sync`, {
         method: 'POST',
         headers: { 
@@ -155,7 +191,11 @@ function LoginPortal() {
         } else if (data.user.role === 'BARBER') {
           navigate('/dashboard')
         } else {
-          navigate('/barbearia-central')
+          if (shopSlug) {
+            navigate(`/${shopSlug}`)
+          } else {
+            navigate('/barbearia-central')
+          }
         }
       } else {
         const err = await res.json()
@@ -188,6 +228,14 @@ function LoginPortal() {
             <label>Celular (WhatsApp)
               <input type="tel" required placeholder="Ex: 5511999999999" value={registerPhone} onChange={e => setRegisterPhone(e.target.value)} />
             </label>
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <label style={{ flex: 1 }}>CEP
+                <input type="text" required value={registerCep} onChange={e => setRegisterCep(e.target.value)} onBlur={handleRegisterCepBlur} placeholder="00000-000" />
+              </label>
+              <label style={{ flex: 2 }}>Cidade
+                <input type="text" required value={registerCity} onChange={e => setRegisterCity(e.target.value)} placeholder="Auto-preenchido pelo CEP" />
+              </label>
+            </div>
             <label>E-mail
               <input type="email" required value={registerEmail} onChange={e => setRegisterEmail(e.target.value)} />
             </label>
@@ -292,6 +340,11 @@ function CustomerPortal() {
       return;
     }
 
+    if (user.city && shop.city && user.city.trim().toLowerCase() !== shop.city.trim().toLowerCase()) {
+      setNotice(`⚠️ Você só pode agendar em barbearias da sua própria cidade (${shop.city}).`);
+      return;
+    }
+
     try {
       const res = await fetch(`${API_URL}/appointments`, {
         method: 'POST',
@@ -340,7 +393,7 @@ function CustomerPortal() {
           <button onClick={handleLogout} className="outline-button" style={{ color: 'var(--status-red)', borderColor: 'var(--status-red)', padding: '6px 12px' }}>Sair</button>
         </nav>
       ) : (
-        <button className="primary-button" onClick={() => navigate('/login')} style={{ padding: '6px 16px' }}>Fazer Login</button>
+        <button className="primary-button" onClick={() => navigate('/login?shop=' + slug)} style={{ padding: '6px 16px' }}>Fazer Login</button>
       )}
     </div>
     {notice && <div className="global-notice" style={{marginBottom: '40px'}}>{notice}<button onClick={() => setNotice('')}>×</button></div>}
@@ -389,7 +442,7 @@ function CustomerPortal() {
                   ) : (
                     <div style={{ marginBottom: '15px', padding: '15px', background: 'var(--bg-color)', borderRadius: '8px', border: '1px solid var(--border-color)', textAlign: 'center' }}>
                       <p style={{ marginBottom: '10px', fontSize: '14px', fontWeight: 500 }}>Você precisa estar logado para agendar.</p>
-                      <button type="button" className="outline-button" onClick={() => navigate('/login')}>Fazer Login ou Cadastrar</button>
+                      <button type="button" className="outline-button" onClick={() => navigate('/login?shop=' + slug)}>Fazer Login ou Cadastrar</button>
                     </div>
                   )}
                 
@@ -788,7 +841,7 @@ function SaasPortal() {
   const [shops, setShops] = useState<Barbershop[]>([])
   const [showShopForm, setShowShopForm] = useState(false)
   const [activeShopId, setActiveShopId] = useState<string>('')
-  const [editingShop, setEditingShop] = useState<{ id: string, name: string, address: string } | null>(null)
+  const [editingShop, setEditingShop] = useState<{ id: string, name: string, address: string, cep?: string, city?: string } | null>(null)
   const navigate = useNavigate()
 
   const userString = localStorage.getItem('user')
@@ -841,7 +894,9 @@ function SaasPortal() {
         name: String(form.get('name')),
         address: String(form.get('address')),
         slug: String(form.get('slug')),
-        ownerId: user?.id
+        ownerId: user?.id,
+        cep: String(form.get('cep')),
+        city: String(form.get('city'))
       })
     })
     setShowShopForm(false)
@@ -860,7 +915,9 @@ function SaasPortal() {
       body: JSON.stringify({
         name: String(form.get('name')),
         address: String(form.get('address')),
-        imageUrl: String(form.get('imageUrl') || '')
+        imageUrl: String(form.get('imageUrl') || ''),
+        cep: String(form.get('cep')),
+        city: String(form.get('city'))
       })
     })
     setEditingShop(null)
@@ -942,6 +999,14 @@ function SaasPortal() {
             <label>Endereço
               <input name="address" required placeholder="Rua XYZ, 123" />
             </label>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <label style={{ flex: 1 }}>CEP
+                <input name="cep" placeholder="00000-000" />
+              </label>
+              <label style={{ flex: 2 }}>Cidade
+                <input name="city" placeholder="Ex: São Paulo" />
+              </label>
+            </div>
             <label>Link / Slug
               <input name="slug" required placeholder="barbearia-do-ze" />
             </label>
@@ -979,6 +1044,10 @@ function SaasPortal() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                   <input name="name" defaultValue={editingShop.name} required style={{ padding: '4px', fontSize: '14px' }} placeholder="Nome" />
                   <input name="address" defaultValue={editingShop.address} required style={{ padding: '4px', fontSize: '12px' }} placeholder="Endereço" />
+                  <div style={{ display: 'flex', gap: '5px' }}>
+                    <input name="cep" defaultValue={editingShop.cep || ''} style={{ padding: '4px', fontSize: '12px', width: '80px' }} placeholder="CEP" />
+                    <input name="city" defaultValue={editingShop.city || ''} style={{ padding: '4px', fontSize: '12px', flex: 1 }} placeholder="Cidade" />
+                  </div>
                   <input name="imageUrl" defaultValue={shop.imageUrl || ''} style={{ padding: '4px', fontSize: '12px' }} placeholder="Link da Imagem (Opcional)" />
                   <div style={{ fontSize: '12px', display: 'flex', gap: '5px', alignItems: 'center' }}>
                     <span style={{color: 'var(--text-muted)'}}>ou Enviar Arquivo:</span>
@@ -999,13 +1068,14 @@ function SaasPortal() {
                 <div>
                   <strong>{shop.name}</strong>
                   <small>{shop.address}</small>
+                  {shop.city && <small style={{ display: 'block', color: 'var(--brand-primary)' }}>{shop.city} - {shop.cep}</small>}
                 </div>
                 <div>
                   <a href={`/${shop.slug}`} target="_blank" rel="noreferrer" style={{color: 'var(--brand-primary)', textDecoration: 'none'}}>{shop.slug}</a>
                 </div>
                 <div>{shop.barbers?.length || 0} barbeiros</div>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="outline-button" onClick={() => setEditingShop({ id: shop.id, name: shop.name, address: shop.address })} style={{ padding: '6px 12px', fontSize: '12px' }}>Editar</button>
+                  <button className="outline-button" onClick={() => setEditingShop({ id: shop.id, name: shop.name, address: shop.address, cep: shop.cep || '', city: shop.city || '' })} style={{ padding: '6px 12px', fontSize: '12px' }}>Editar</button>
                   <button className="outline-button" onClick={() => setActiveShopId(activeShopId === shop.id ? '' : shop.id)} style={{ padding: '6px 12px', fontSize: '12px' }}>Novo Barbeiro</button>
                 </div>
               </div>
