@@ -569,7 +569,12 @@ input::placeholder {
     width: 100%;
   }
 
+  .dashboard-search {
+    width: 100%;
+  }
+
   .dashboard-search input {
+    width: 100%;
     min-width: 100%;
   }
   

@@ -107,7 +107,7 @@ export default function App() {
 
 function HomePortal() {
   return <main className="customer-page" style={{ textAlign: 'center', marginTop: '10vh' }}>
-    <h1 style={{ fontSize: '48px', marginBottom: '20px' }}>Barbearia<span style={{color: 'var(--gold-primary)'}}>_cidade</span></h1>
+    <h1 style={{ fontSize: 'clamp(32px, 8vw, 48px)', marginBottom: '20px', wordBreak: 'break-word', padding: '0 10px' }}>Barbearia<span style={{color: 'var(--gold-primary)'}}>_cidade</span></h1>
     <p style={{ color: 'var(--text-muted)', fontSize: '18px', marginBottom: '40px' }}>
       A plataforma definitiva para gestão de barbearias.
     </p>
