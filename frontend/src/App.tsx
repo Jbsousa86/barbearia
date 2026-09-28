@@ -111,7 +111,7 @@ function HomePortal() {
     <p style={{ color: 'var(--text-muted)', fontSize: '18px', marginBottom: '40px' }}>
       A plataforma definitiva para gestão de barbearias.
     </p>
-    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
       <Link to="/login" className="primary-button" style={{ textDecoration: 'none', padding: '16px 32px' }}>Acessar Plataforma</Link>
       <Link to="/barbearia-central?demo=true" className="outline-button" style={{ textDecoration: 'none', padding: '16px 32px', fontSize: '16px' }}>Ver barbearia de demonstração</Link>
     </div>
@@ -394,7 +394,7 @@ function CustomerPortal() {
         <nav style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
           <button className={`outline-button ${activeTab === 'agendar' ? 'active' : ''}`} onClick={() => setActiveTab('agendar')} style={{ padding: '6px 12px' }}>Agendar</button>
           <button className={`outline-button ${activeTab === 'perfil' ? 'active' : ''}`} onClick={() => setActiveTab('perfil')} style={{ padding: '6px 12px' }}>Meu Perfil</button>
-          <button onClick={handleLogout} className="outline-button" style={{ color: 'var(--status-red)', borderColor: 'var(--status-red)', padding: '6px 12px' }}>Sair</button>
+          <button onClick={handleLogout} className="logout-button">Sair</button>
         </nav>
       )}
     </div>
@@ -671,7 +671,7 @@ function SalonPortal() {
         </p>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
-        <button onClick={handleLogout} className="outline-button">Sair da conta</button>
+        <button onClick={handleLogout} className="logout-button">Sair da conta</button>
         {activeTab === 'agenda' && <label className="dashboard-search">Buscar
           <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Nome ou telefone..." />
         </label>}
@@ -1004,9 +1004,9 @@ function SaasPortal() {
         <h1>Visão do SaaS</h1>
         <p className="subheading">Acompanhe a saúde comercial e operacional da sua plataforma.</p>
       </div>
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button onClick={handleLogout} className="outline-button">Sair</button>
-        <button className="primary-button" onClick={() => setShowShopForm(!showShopForm)}>{showShopForm ? 'Cancelar' : '+ Nova barbearia'}</button>
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <button onClick={handleLogout} className="logout-button">Sair</button>
+        <button className="primary-button" style={{ margin: 0 }} onClick={() => setShowShopForm(!showShopForm)}>{showShopForm ? 'Cancelar' : '+ Nova barbearia'}</button>
       </div>
     </div>
     

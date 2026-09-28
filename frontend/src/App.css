@@ -639,3 +639,22 @@ input::placeholder {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* High Contrast Buttons */
+.logout-button {
+  background: var(--status-red);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background: #b71c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(211, 47, 47, 0.4);
+}
