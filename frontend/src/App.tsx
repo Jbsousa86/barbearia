@@ -75,11 +75,11 @@ function ProfileForm({ user }: { user: any }) {
       <label>WhatsApp (Celular)
         <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} required />
       </label>
-      <div style={{ display: 'flex', gap: '15px' }}>
-        <label style={{ flex: 1 }}>CEP
+      <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+        <label style={{ flex: '1 1 120px' }}>CEP
           <input type="text" value={cep} onChange={e => setCep(e.target.value)} onBlur={handleCepBlur} placeholder="00000-000" />
         </label>
-        <label style={{ flex: 2 }}>Cidade
+        <label style={{ flex: '2 1 200px' }}>Cidade
           <input type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="Auto-preenchido pelo CEP" />
         </label>
       </div>
@@ -650,7 +650,25 @@ function SalonPortal() {
       <div>
         <p className="eyebrow">PAINEL DO BARBEIRO</p>
         <h1>Olá, {user?.name || 'Barbeiro'}</h1>
-        <p className="subheading">Barbearia: <strong>{shop?.name || 'Carregando...'}</strong> | Link para clientes: <Link to={`/${shop?.slug}`}>barbersaas.com/{shop?.slug}</Link></p>
+        <p className="subheading" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          Barbearia: <strong>{shop?.name || 'Carregando...'}</strong> | 
+          <button 
+            type="button" 
+            className="outline-button" 
+            style={{ padding: '2px 8px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+            onClick={() => {
+              const url = `${window.location.origin}/${shop?.slug}`;
+              if (navigator.share) {
+                navigator.share({ title: `Agende na ${shop?.name}`, url });
+              } else {
+                navigator.clipboard.writeText(url);
+                alert('Link copiado!');
+              }
+            }}
+          >
+            🔗 Compartilhar Link
+          </button>
+        </p>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
         <button onClick={handleLogout} className="outline-button">Sair da conta</button>
@@ -1003,11 +1021,11 @@ function SaasPortal() {
             <label>Endereço
               <input name="address" required placeholder="Rua XYZ, 123" />
             </label>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <label style={{ flex: 1 }}>CEP
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <label style={{ flex: '1 1 120px' }}>CEP
                 <input name="cep" placeholder="00000-000" />
               </label>
-              <label style={{ flex: 2 }}>Cidade
+              <label style={{ flex: '2 1 200px' }}>Cidade
                 <input name="city" placeholder="Ex: São Paulo" />
               </label>
             </div>
@@ -1048,9 +1066,9 @@ function SaasPortal() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                   <input name="name" defaultValue={editingShop.name} required style={{ padding: '4px', fontSize: '14px' }} placeholder="Nome" />
                   <input name="address" defaultValue={editingShop.address} required style={{ padding: '4px', fontSize: '12px' }} placeholder="Endereço" />
-                  <div style={{ display: 'flex', gap: '5px' }}>
-                    <input name="cep" defaultValue={editingShop.cep || ''} style={{ padding: '4px', fontSize: '12px', width: '80px' }} placeholder="CEP" />
-                    <input name="city" defaultValue={editingShop.city || ''} style={{ padding: '4px', fontSize: '12px', flex: 1 }} placeholder="Cidade" />
+                  <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                    <input name="cep" defaultValue={editingShop.cep || ''} style={{ padding: '4px', fontSize: '12px', flex: '1 1 80px' }} placeholder="CEP" />
+                    <input name="city" defaultValue={editingShop.city || ''} style={{ padding: '4px', fontSize: '12px', flex: '2 1 150px' }} placeholder="Cidade" />
                   </div>
                   <input name="imageUrl" defaultValue={shop.imageUrl || ''} style={{ padding: '4px', fontSize: '12px' }} placeholder="Link da Imagem (Opcional)" />
                   <div style={{ fontSize: '12px', display: 'flex', gap: '5px', alignItems: 'center' }}>
@@ -1075,7 +1093,22 @@ function SaasPortal() {
                   {shop.city && <small style={{ display: 'block', color: 'var(--brand-primary)' }}>{shop.city} - {shop.cep}</small>}
                 </div>
                 <div>
-                  <a href={`/${shop.slug}`} target="_blank" rel="noreferrer" style={{color: 'var(--brand-primary)', textDecoration: 'none'}}>{shop.slug}</a>
+                  <button 
+                    type="button" 
+                    className="outline-button" 
+                    style={{ padding: '4px 8px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    onClick={() => {
+                      const url = `${window.location.origin}/${shop.slug}`;
+                      if (navigator.share) {
+                        navigator.share({ title: `Agende na ${shop.name}`, url });
+                      } else {
+                        navigator.clipboard.writeText(url);
+                        alert('Link copiado!');
+                      }
+                    }}
+                  >
+                    🔗 Compartilhar
+                  </button>
                 </div>
                 <div>{shop.barbers?.length || 0} barbeiros</div>
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -1087,8 +1120,8 @@ function SaasPortal() {
             
             <div style={{ paddingLeft: '20px', marginTop: '10px' }}>
               {shop.barbers?.map(barber => (
-                <div key={barber.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderTop: '1px solid var(--border-color)' }}>
-                  <span>{barber.user.name} ({barber.user.email})</span>
+                <div key={barber.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', padding: '8px 0', borderTop: '1px solid var(--border-color)' }}>
+                  <span style={{ wordBreak: 'break-word', flex: '1 1 auto' }}>{barber.user.name} ({barber.user.email})</span>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     {barber.user.isActive ? <span className="status green">Ativo</span> : <span className="status red">Inativo</span>}
                     <button className="outline-button" style={{ padding: '4px 8px', fontSize: '12px', color: barber.user.isActive ? 'var(--status-red)' : 'var(--gold-primary)', borderColor: barber.user.isActive ? 'var(--status-red)' : 'var(--gold-primary)' }} onClick={() => toggleBarberStatus(barber.user.id)}>
